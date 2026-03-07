@@ -144,7 +144,7 @@ class TestEval(TestCase):
         self.assertEqual(
             eval([
                 CallExpr(
-                    operator=SymbolLiteral(value="list"),
+                    operator=SymbolLiteral(value="empty"),
                     args=[]
                 )
             ]),
@@ -160,7 +160,7 @@ class TestEval(TestCase):
                     args=[
                         IntLiteral(1),
                         CallExpr(
-                            operator=SymbolLiteral(value="list"),
+                            operator=SymbolLiteral(value="empty"),
                             args=[]
                         )
                     ]
@@ -180,7 +180,7 @@ class TestEval(TestCase):
                             args=[
                                 IntLiteral(1),
                                 CallExpr(
-                                    operator=SymbolLiteral(value="list"),
+                                    operator=SymbolLiteral(value="empty"),
                                     args=[]
                                 )
                             ]

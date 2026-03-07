@@ -73,7 +73,7 @@ BUILTINS: Mapping[str, Builtin] = MappingProxyType({
     "or": BoolBoolToBool(fn=lambda a, b: bool(a or b)),
     "not": BoolToBool(fn=lambda a: not a),
     "++": StringStringToString(fn=lambda a, b: a + b),
-    "list": ListConstructor(fn=lambda: ListEmpty()),
+    "empty": ListConstructor(fn=lambda: ListEmpty()),
     "::": PrependList(fn=lambda head, list: ListNode(head=head, rest=list)),
     "head": GetHeadFromList(fn=lambda list: list.head),
     "rest": GetRestFromList(fn=lambda list: list.rest),

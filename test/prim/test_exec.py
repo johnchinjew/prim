@@ -68,12 +68,12 @@ class TestExec(TestCase):
     def test_exec_list(self):
         self.assertEqual(
             [2],
-            exec("(head (rest (:: 1 (:: 2 (:: 3 (list))))))")
+            exec("(head (rest (:: 1 (:: 2 (:: 3 (empty))))))")
         )
     
     def test_exec_multiple_expressions(self):
         source_code = """
-        (head (rest (:: 1 (:: 2 (:: 3 (list))))))
+        (head (rest (:: 1 (:: 2 (:: 3 (empty))))))
         (if 
           false 1
           (and (< 1 2) (< 1 3)) 2
