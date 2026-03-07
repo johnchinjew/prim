@@ -52,7 +52,7 @@ class PrependList(Builtin):
     fn: Callable[["Value", "List"], "List"]
 
 @dataclass(frozen=True)
-class GetValueFromList(Builtin):
+class GetHeadFromList(Builtin):
     fn: Callable[["ListNode"], "Value"]
 
 @dataclass(frozen=True)
@@ -74,8 +74,8 @@ BUILTINS: Mapping[str, Builtin] = MappingProxyType({
     "not": BoolToBool(fn=lambda a: not a),
     "++": StringStringToString(fn=lambda a, b: a + b),
     "list": ListConstructor(fn=lambda: ListEmpty()),
-    "::": PrependList(fn=lambda value, list: ListNode(value=value, rest=list)),
-    "value": GetValueFromList(fn=lambda list: list.value),
+    "::": PrependList(fn=lambda head, list: ListNode(head=head, rest=list)),
+    "head": GetHeadFromList(fn=lambda list: list.head),
     "rest": GetRestFromList(fn=lambda list: list.rest),
 })
 
@@ -125,7 +125,7 @@ class ListEmpty(List):
 
 @dataclass(frozen=True)
 class ListNode(List):
-    value: "Value"
+    head: "Value"
     rest: List
 
 Number = int | float
@@ -233,11 +233,11 @@ def _eval_call_builtin(operator: Builtin, args: list[Value]) -> Value:
     elif isinstance(operator, PrependList):
         if len(args) != 2:
             raise RuntimeError("Expected 2 arguments")
-        value, list = args
-        if not isinstance(value, Value) or not isinstance(list, List):
+        head, list = args
+        if not isinstance(head, Value) or not isinstance(list, List):
             raise RuntimeError("Expected 2 arguments: a value, a list")
-        return operator.fn(value, list)
-    elif isinstance(operator, GetValueFromList):
+        return operator.fn(head, list)
+    elif isinstance(operator, GetHeadFromList):
         if len(args) != 1:
             raise RuntimeError("Expected 1 arguments")
         list, = args

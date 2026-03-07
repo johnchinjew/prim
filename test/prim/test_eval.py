@@ -168,12 +168,12 @@ class TestEval(TestCase):
             ])
         )
     
-    def test_eval_list_get_value(self):
+    def test_eval_list_get_head(self):
         self.assertEqual(
             [1],
             eval([
                 CallExpr(
-                    operator=SymbolLiteral("value"),
+                    operator=SymbolLiteral("head"),
                     args=[
                         CallExpr(
                             operator=SymbolLiteral(value="::"),
