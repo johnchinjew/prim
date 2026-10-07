@@ -1,1 +1,5 @@
-(head (rest (:: 1 (:: 2 (:: 3 (empty))))))
+(define sum (lambda (xs)
+  (if (empty? xs) 0
+    (+ (head xs) (sum (rest xs))))))
+
+(sum (:: 1 (:: 2 (empty))))

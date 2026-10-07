@@ -83,6 +83,32 @@ class TestExec(TestCase):
             exec("(head (rest (:: 1 (:: 2 (:: 3 (empty))))))")
         )
     
+    def test_exec_list_empty_predicate(self):
+        source_code = """
+        (empty? (empty))
+        (empty? (:: 1 (empty)))
+        (empty? (rest (:: 1 (empty))))
+        """
+        self.assertEqual([True, False, True], exec(source_code))
+
+    def test_exec_list_empty_predicate_rejects_invalid_arguments(self):
+        with self.assertRaises(RuntimeError):
+            exec("(empty?)")
+        with self.assertRaises(RuntimeError):
+            exec("(empty? (empty) (empty))")
+        with self.assertRaises(RuntimeError):
+            exec("(empty? 0)")
+
+    def test_exec_list_traversal(self):
+        source_code = """
+        (define sum (lambda (xs)
+          (if (empty? xs) 0
+            (+ (head xs) (sum (rest xs))))))
+        (sum (:: 1 (:: 2 (empty))))
+        (sum (empty))
+        """
+        self.assertEqual(["<DEFINITION(S) ADDED>", 3, 0], exec(source_code))
+
     def test_exec_multiple_expressions(self):
         source_code = """
         (head (rest (:: 1 (:: 2 (:: 3 (empty))))))

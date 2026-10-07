@@ -48,6 +48,10 @@ class ListConstructor(Builtin):
     fn: Callable[[], "List"]
 
 @dataclass(frozen=True)
+class ListToBool(Builtin):
+    fn: Callable[["List"], bool]
+
+@dataclass(frozen=True)
 class PrependList(Builtin):
     fn: Callable[["Value", "List"], "List"]
 
@@ -74,6 +78,7 @@ BUILTINS: Mapping[str, Builtin] = MappingProxyType({
     "not": BoolToBool(fn=lambda a: not a),
     "++": StringStringToString(fn=lambda a, b: a + b),
     "empty": ListConstructor(fn=lambda: ListEmpty()),
+    "empty?": ListToBool(fn=lambda list: isinstance(list, ListEmpty)),
     "::": PrependList(fn=lambda head, list: ListNode(head=head, rest=list)),
     "head": GetHeadFromList(fn=lambda list: list.head),
     "rest": GetRestFromList(fn=lambda list: list.rest),
@@ -231,6 +236,13 @@ def _eval_call_builtin(operator: Builtin, args: list[Value]) -> Value:
         if len(args) != 0:
             raise RuntimeError("Expected 0 arguments")
         return operator.fn()
+    elif isinstance(operator, ListToBool):
+        if len(args) != 1:
+            raise RuntimeError("Expected 1 argument")
+        list, = args
+        if not isinstance(list, List):
+            raise RuntimeError("Expected 1 argument: a list")
+        return operator.fn(list)
     elif isinstance(operator, PrependList):
         if len(args) != 2:
             raise RuntimeError("Expected 2 arguments")
