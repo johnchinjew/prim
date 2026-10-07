@@ -195,7 +195,7 @@ def _eval_call(expr: CallExpr, env: Frame) -> tuple[Value, Frame]:
     if isinstance(operator, Builtin):
         return _eval_call_builtin(operator, args), env
     elif isinstance(operator, Closure):
-        return _eval_call_closure(operator, args)
+        return _eval_call_closure(operator, args), env
     else:
         raise RuntimeError(f"Unsupported operator: {operator}")
 
@@ -266,7 +266,7 @@ def _eval_call_builtin(operator: Builtin, args: list[Value]) -> Value:
         return operator.fn(list)
     raise RuntimeError(f"Unsupported operator: {operator}")
 
-def _eval_call_closure(operator: Closure, args: list[Value]) -> tuple[Value, Frame]:
+def _eval_call_closure(operator: Closure, args: list[Value]) -> Value:
     if len(args) != len(operator.params):
         raise RuntimeError("Argument count mismatch")
     bindings = MappingProxyType({
@@ -276,7 +276,8 @@ def _eval_call_closure(operator: Closure, args: list[Value]) -> tuple[Value, Fra
         bindings=bindings,
         parent=operator.env
     )
-    return _eval_expr(operator.body, child_env)
+    value, _ = _eval_expr(operator.body, child_env)
+    return value
 
 def _eval_define(expr: DefineExpr, env: Frame) -> tuple[Value, Frame]:
     values_and_thunks = list(map(

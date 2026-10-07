@@ -45,6 +45,37 @@ class TestExec(TestCase):
         )
         """
         self.assertEqual([2], exec(source_code))
+
+    def test_exec_call_preserves_caller_binding(self):
+        source_code = """
+        (define x 10)
+        ((lambda (x) x) 20)
+        x
+        """
+        self.assertEqual(["<DEFINITION(S) ADDED>", 20, 10], exec(source_code))
+
+    def test_exec_call_does_not_leak_parameter(self):
+        source_code = """
+        (define identity (lambda (x) x))
+        (identity 20)
+        x
+        """
+        with self.assertRaises(RuntimeError):
+            exec(source_code)
+
+    def test_exec_returned_closure_keeps_captured_binding(self):
+        source_code = """
+        (define make_adder (lambda (x) (lambda (y) (+ x y))))
+        (define add_ten (make_adder 10))
+        (define x 100)
+        (add_ten 5)
+        x
+        """
+        self.assertEqual(
+            ["<DEFINITION(S) ADDED>"] * 3 + [15, 100],
+            exec(source_code),
+        )
+
     
     def test_exec_math(self):
         source_code = "(+ 1 (* (- -2.1 3.14) 4))"
