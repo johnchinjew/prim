@@ -200,6 +200,7 @@ def _eval_call_builtin(operator: Builtin, args: list[Value]) -> Value:
             raise RuntimeError("Expected 2 arguments")
         a, b = args
         if (
+            isinstance(a, bool) or isinstance(b, bool) or
             (not isinstance(a, int) and not isinstance(a, float)) or
             (not isinstance(b, int) and not isinstance(b, float))
         ):

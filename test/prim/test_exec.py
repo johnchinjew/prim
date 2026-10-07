@@ -49,6 +49,18 @@ class TestExec(TestCase):
     def test_exec_math(self):
         source_code = "(+ 1 (* (- -2.1 3.14) 4))"
         self.assertEqual([-19.96], exec(source_code))
+
+    def test_exec_arithmetic_rejects_booleans(self):
+        with self.assertRaises(RuntimeError):
+            exec("(+ true 1)")
+        with self.assertRaises(RuntimeError):
+            exec("(+ 1 false)")
+
+    def test_exec_numeric_comparisons_reject_booleans(self):
+        with self.assertRaises(RuntimeError):
+            exec("(= true 1)")
+        with self.assertRaises(RuntimeError):
+            exec("(= 1 false)")
     
     def test_exec_string(self):
         source_code = """
